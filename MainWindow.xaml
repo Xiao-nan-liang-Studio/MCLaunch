@@ -1,0 +1,118 @@
+﻿<pu:WindowX   x:Class="MCLaunch.MainWindow"
+        
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCLaunch"
+        xmlns:pu="https://opensource.panuon.com/wpf-ui"
+        mc:Ignorable="d"
+        Title="FooView" Height="350" Width="500"
+              pu:WindowXCaption.Height="40"
+              pu:WindowXCaption.Buttons="Close">
+
+    <pu:WindowXCaption.HeaderTemplate>
+        <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+                <Image Margin="10,0,0,0" Source="/Samples;component/Resources/Logo.png"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       Height="25"/>
+            </StackPanel>
+        </DataTemplate>
+    </pu:WindowXCaption.HeaderTemplate>
+    <pu:WindowXCaption.ExtendControl>
+        <StackPanel Orientation="Horizontal">
+            <Button Width="40"
+                    Height="35"
+                    FontSize="18"
+                    Background="Transparent"
+                    pu:ButtonHelper.HoverBackground="#CCCCCC"
+                    pu:ButtonHelper.HoverForeground="#FFFFFF"
+                    VerticalAlignment="Top"
+                    FontFamily="{StaticResource PanuonIconFont}"
+                    Content="&#xe98f;"/>
+            <pu:DropDown Width="40"
+                          Height="35"
+                          VerticalAlignment="Top"
+                         pu:ShadowHelper.BlurRadius="10"
+                         pu:ShadowHelper.ShadowDepth="3"
+                         pu:DropDownHelper.Placement="BottomLeft"
+                         pu:DropDownHelper.CornerRadius="5,1,5,5"
+                         pu:DropDownHelper.ClipDockSideShadow="False"
+                         StaysOpen="False">
+                <pu:DropDown.Content>
+                    <ToggleButton Background="Transparent"
+                    pu:ToggleButtonHelper.HoverBackground="#CCCCCC"
+                    pu:ToggleButtonHelper.HoverForeground="#FFFFFF"
+                    pu:ToggleButtonHelper.CheckedBackground="#CCCCCC"
+                    pu:ToggleButtonHelper.CheckedForeground="#FFFFFF"
+                    IsChecked="{Binding IsOpen, RelativeSource={RelativeSource AncestorType=pu:DropDown}}"
+                    Content="&#xe939;"
+                    FontSize="18"
+                    FontFamily="{StaticResource PanuonIconFont}"/>
+                </pu:DropDown.Content>
+                <StackPanel Height="150"
+                            Width="120">
+                </StackPanel>
+            </pu:DropDown>
+        </StackPanel>
+    </pu:WindowXCaption.ExtendControl>
+
+    <Grid>
+        <ComboBox
+            x:Name="VerCombo"
+            Width="170"
+            Height="35"
+            pu:ComboBoxHelper.ClearButtonVisibility="VisibleOnHover"
+            pu:ComboBoxHelper.CornerRadius="4"
+            pu:ComboBoxHelper.ItemsHoverBackground="#2236AAF7"
+            pu:ComboBoxHelper.ItemsSelectedBackground="#36AAF7"
+            pu:ComboBoxHelper.ItemsSelectedForeground="#FFFFFF"
+            pu:ComboBoxHelper.OpenedBorderThickness="0"
+            pu:ComboBoxHelper.OpenedCornerRadius="4,4,0,0"
+            pu:ComboBoxHelper.OpenedForeground="#36AAF7"
+            pu:ComboBoxHelper.OpenedShadowColor="#36AAF7"
+            pu:ComboBoxHelper.Watermark="选择一个游戏版本"
+            pu:ComboBoxHelper.WatermarkForeground="Gray"
+            pu:DropDownHelper.BorderThickness="0"
+            pu:DropDownHelper.CornerRadius="0,0,4,4"
+            pu:DropDownHelper.ShadowColor="#36AAF7"
+            pu:DropDownHelper.VerticalOffset="-1"
+            pu:ShadowHelper.BlurRadius="15"
+            pu:ShadowHelper.ShadowDepth="5"
+            BorderBrush="LightGray"
+            BorderThickness="1.5" Margin="0,0,30,100" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
+            <ComboBox.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Version}"/>
+            </DataTemplate>
+            </ComboBox.ItemTemplate>
+
+
+        </ComboBox>
+        <Button Content="启动游戏!" Height="40" Width="170" 
+        pu:ButtonHelper.CornerRadius="4" 
+        Background="#36AAF7" Foreground="#FFFFFF"
+        pu:ButtonHelper.Icon="&#xe949;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
+        pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,30" />
+        <Slider Width="400" VerticalAlignment="Top"
+        Foreground="DimGray"
+        pu:SliderHelper.IsTextVisible="True" pu:SliderHelper.TextSpacing="0" pu:SliderHelper.TextStringFormat="N1"
+        pu:SliderHelper.TrackThickness="10" 
+        IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="78,99,22,0" Maximum="100"> 
+            <Slider.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="#447CCBFC" />
+                    <GradientStop Color="#44FF6BB8" Offset="1" />
+                </LinearGradientBrush>
+            </Slider.Background>
+            <pu:SliderHelper.CoveredBackground>
+                <LinearGradientBrush>
+                    <GradientStop Color="#7CCBFC" />
+                    <GradientStop Color="#FF6BB8" Offset="1" />
+                </LinearGradientBrush>
+            </pu:SliderHelper.CoveredBackground>
+        </Slider>
+    </Grid>
+
+</pu:WindowX>
