@@ -1,4 +1,19 @@
-﻿using System.Diagnostics;
+﻿using MinecraftLaunch;
+using MinecraftLaunch.Base.Models.Game;
+using MinecraftLaunch.Components.Authenticator;
+using MinecraftLaunch.Components.Downloader;
+using MinecraftLaunch.Components.Installer;
+using MinecraftLaunch.Components.Logging;
+using MinecraftLaunch.Components.Parser;
+using MinecraftLaunch.Extensions;
+using MinecraftLaunch.Launch;
+using MinecraftLaunch.Utilities;
+using Panuon.WPF.UI;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,18 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MinecraftLaunch.Base.Models.Game;
-using MinecraftLaunch.Components.Authenticator;
-using MinecraftLaunch.Components.Installer;
-using MinecraftLaunch.Components.Logging;
-using MinecraftLaunch.Components.Parser;
-using MinecraftLaunch.Launch;
-using MinecraftLaunch.Utilities;
-using MinecraftLaunch;
-using Panuon.WPF.UI;   
-using MinecraftLaunch.Components.Downloader;
-using MinecraftLaunch.Extensions;
-using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace MCLaunch
 {
@@ -28,9 +32,9 @@ namespace MCLaunch
     public class Launch()
     {
 
-        public async void ALaunch()
+        public static async void ALaunch()
         {
-            
+
             var sw = Stopwatch.StartNew();
             #region 原版安装器
 
@@ -371,7 +375,7 @@ namespace MCLaunch
                 //settings.CurseForgeApiKey = "Your Curseforge API";
                 settings.UserAgent = "MLTest/1.0";
             });
-            
+
 
         }
     }
@@ -379,33 +383,98 @@ namespace MCLaunch
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    // 1. 创建ViewModel
+
     public partial class MainWindow : WindowX
     {
+        private void CheckMemoryStatus()
+        {
+            var process = Process.GetCurrentProcess();
+
+            // 当前进程内存使用
+            long processMemoryMB = process.WorkingSet64 / 1024 / 1024;
+            long privateMemoryMB = process.PrivateMemorySize64 / 1024 / 1024;
+
+            Debug.WriteLine($"🐾 进程工作集内存: {processMemoryMB} MB");
+            Debug.WriteLine($"🐾 进程私有内存: {privateMemoryMB} MB");
+            Debug.WriteLine($"🐾 GC总内存: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
+        }
+        async private void GetJavaVersions()
+        {
+
+
+            var asyncJavas = JavaUtil.EnumerableJavaAsync();
+            await foreach (var java in asyncJavas)
+            {
+                Debug.WriteLine(java);
+                JavaCombo.Items.Add(java);
+            }
+
+
+        }
         public MainWindow()
         {
-            InitializeComponent(); 
+
+
+
+            InitializeComponent();
+
             MinecraftParser minecraftParser = ".\\.minecraft";
-            //minecraftParser.GetMinecrafts().ForEach(x =>
-            //{
-            //    VerCombo.Items.Add(x.Id);
-            //});
             Init.AInit();
+            List<MinecraftEntry> Minelist;
+            Minelist = minecraftParser.GetMinecrafts();
+            CheckMemoryStatus();
+            GetJavaVersions();
 
-            //VerCombo.Items.Add(minecraftParser.GetMinecrafts().First())
-            //VerCombo.Items.Clear();
-            //VerCombo.ItemsSource = minecraftParser.GetMinecrafts();
-            //VerCombo.SelectedValuePath = "Version";
-            VerCombo.DisplayMemberPath = "VersionId";
-            VerCombo.ItemsSource = minecraftParser.GetMinecrafts();
+            VerCombo.DisplayMemberPath = "Id";
+            VerCombo.SelectedValuePath = "Id";
+            VerCombo.ItemsSource = Minelist;
 
-            
 
+
+
+
+
+        }
+        private static readonly Dictionary<Type, Page> bufferedPages =
+       new Dictionary<Type, Page>();
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // 如果选择项不是 ListBoxItem, 则返回
+            if (navMenu.SelectedItem is not ListBoxItem item)
+                return;
+
+            // 如果 Tag 不是一个类型, 则返回
+            if (item.Tag is not Type type)
+                return;
+
+            // 如果页面缓存中找不到页面, 则创建一个新的页面并存入
+            if (!bufferedPages.TryGetValue(type, out Page? page))
+                page = bufferedPages[type] =
+                    Activator.CreateInstance(type) as Page ?? throw new Exception("this would never happen");
+
+            // 使用 Frame 进行导航.
+            appFrame.Navigate(page);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Launch launch = new();
-            launch.ALaunch();
+            MessageBoxX.Show("别急,快速打开是不可能的,要想快就捐100000万!!!!!!!(bushi),没给白子充钱导致的(√)");
+            //Launch launch = new();
+            //launch.ALaunch();
         }
+
+        private void VerCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

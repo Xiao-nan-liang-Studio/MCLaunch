@@ -5,9 +5,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCLaunch"
-        xmlns:pu="https://opensource.panuon.com/wpf-ui"
-        mc:Ignorable="d"
-        Title="FooView" Height="350" Width="500"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        
+              xmlns:pages="clr-namespace:MCLaunch.Views.Pages"
+              xmlns:pu="https://opensource.panuon.com/wpf-ui" 
+              mc:Ignorable="d"
+        Title="FooView" Height="480" Width="720"
               pu:WindowXCaption.Height="40"
               pu:WindowXCaption.Buttons="Close">
 
@@ -61,7 +64,7 @@
     <Grid>
         <ComboBox
             x:Name="VerCombo"
-            Width="170"
+            Width="160"
             Height="35"
             pu:ComboBoxHelper.ClearButtonVisibility="VisibleOnHover"
             pu:ComboBoxHelper.CornerRadius="4"
@@ -81,25 +84,62 @@
             pu:ShadowHelper.BlurRadius="15"
             pu:ShadowHelper.ShadowDepth="5"
             BorderBrush="LightGray"
-            BorderThickness="1.5" Margin="0,0,30,100" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
-            <ComboBox.ItemTemplate>
-            <DataTemplate>
-                <TextBlock Text="{Binding Version}"/>
-            </DataTemplate>
-            </ComboBox.ItemTemplate>
+            BorderThickness="1.5" Margin="3,513,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="VerCombo_SelectionChanged" Grid.Column="1">
 
 
         </ComboBox>
-        <Button Content="启动游戏!" Height="40" Width="170" 
+
+        <ComboBox
+    x:Name="JavaCombo"
+    Width="170"
+    Height="35"
+    pu:ComboBoxHelper.ClearButtonVisibility="VisibleOnHover"
+    pu:ComboBoxHelper.CornerRadius="4"
+    pu:ComboBoxHelper.ItemsHoverBackground="#2236AAF7"
+    pu:ComboBoxHelper.ItemsSelectedBackground="#36AAF7"
+    pu:ComboBoxHelper.ItemsSelectedForeground="#FFFFFF"
+    pu:ComboBoxHelper.OpenedBorderThickness="0"
+    pu:ComboBoxHelper.OpenedCornerRadius="4,4,0,0"
+    pu:ComboBoxHelper.OpenedForeground="#36AAF7"
+    pu:ComboBoxHelper.OpenedShadowColor="#36AAF7"
+    pu:ComboBoxHelper.Watermark="选择一个Java版本"
+    pu:ComboBoxHelper.WatermarkForeground="Gray"
+    pu:DropDownHelper.BorderThickness="0"
+    pu:DropDownHelper.CornerRadius="0,0,4,4"
+    pu:DropDownHelper.ShadowColor="#36AAF7"
+    pu:DropDownHelper.VerticalOffset="-1"
+    pu:ShadowHelper.BlurRadius="15"
+    pu:ShadowHelper.ShadowDepth="5"
+    BorderBrush="LightGray"
+    BorderThickness="1.5" Margin="48,333,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2"></ComboBox>
+
+        <TextBox x:Name="GameNameTextBox"
+                 Height="35" Width="170"
+                  pu:TextBoxHelper.CornerRadius="4"
+         pu:TextBoxHelper.Icon="&#xe939;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}"
+         pu:TextBoxHelper.Watermark="请输入游戏用户名"
+         pu:TextBoxHelper.FocusedForeground="#36AAF7" pu:TextBoxHelper.FocusedBorderBrush="#36AAF7" 
+         pu:TextBoxHelper.FocusedShadowColor="#36AAF7"
+         pu:ShadowHelper.Opacity="0.5" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                 Margin="0,0,142,116" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+
+        <Button Content="启动游戏!" Height="40" Width="124" 
         pu:ButtonHelper.CornerRadius="4" 
         Background="#36AAF7" Foreground="#FFFFFF"
         pu:ButtonHelper.Icon="&#xe949;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
-        pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,30" />
-        <Slider Width="400" VerticalAlignment="Top"
+        pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,188,34" />
+        <TextBlock
+    Height="20"
+    pu:TextBlockHelper.HighlightBackground="LightGray"
+    pu:TextBlockHelper.HighlightForeground="Red"
+    pu:TextBlockHelper.HighlightRule="FirstOnly"
+    pu:TextBlockHelper.HighlightText="内存大小"
+    Text="本次启动游戏所使用内存大小" Margin="0,0,111,464" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="155"/>
+        <Slider VerticalAlignment="Top"
         Foreground="DimGray"
         pu:SliderHelper.IsTextVisible="True" pu:SliderHelper.TextSpacing="0" pu:SliderHelper.TextStringFormat="N1"
         pu:SliderHelper.TrackThickness="10" 
-        IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="78,99,22,0" Maximum="100"> 
+        IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="1,101,115,0" Maximum="100" Grid.Column="1" Height="20">
             <Slider.Background>
                 <LinearGradientBrush>
                     <GradientStop Color="#447CCBFC" />
@@ -113,6 +153,12 @@
                 </LinearGradientBrush>
             </pu:SliderHelper.CoveredBackground>
         </Slider>
+        <ListBox Name="navMenu" SelectionChanged="ListBox_SelectionChanged" Grid.ColumnSpan="2">
+            <ListBoxItem Content="Go" Tag="{x:Type pages:Go}"/>
+            <ListBoxItem Content="Users" Tag="{x:Type pages:Users}"/>
+        </ListBox>
+
+        <Frame Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,110,0,0"/>
     </Grid>
 
 </pu:WindowX>
