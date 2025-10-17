@@ -4,15 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MCLaunch.Views.Pages"
+      xmlns:pu="https://opensource.panuon.com/wpf-ui"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Users">
 
     <Grid>
-    <Grid MaxWidth="400" Margin="20">
-        <StackPanel HorizontalAlignment="Stretch">
-            <TextBlock>This is page2</TextBlock>
-        </StackPanel>
-    </Grid>
     </Grid>
 </Page>
