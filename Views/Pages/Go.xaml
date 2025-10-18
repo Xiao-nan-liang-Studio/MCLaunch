@@ -10,6 +10,11 @@
       Title="Go">
 
     <Grid>
+
+        <StackPanel Orientation="Vertical" Margin="45,0,0,40" Width="100" Height="70" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <TextBlock Height="35" Width="100" Text="{Binding Text, ElementName=JavaCombo}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Height="35" Width="100" Text="{Binding Text, ElementName=VerCombo}"/>
+        </StackPanel>
         <ComboBox
         x:Name="VerCombo"
         Width="160"
@@ -32,11 +37,7 @@
         pu:ShadowHelper.BlurRadius="15"
         pu:ShadowHelper.ShadowDepth="5"
         BorderBrush="LightGray"
-<<<<<<< Updated upstream
-        BorderThickness="1.5" Margin="150,299,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-=======
-        BorderThickness="1.5" Margin="150,0,0,37" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
->>>>>>> Stashed changes
+        BorderThickness="1.5" Margin="150,0,0,40" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 
         <ComboBox
 x:Name="JavaCombo"
@@ -60,11 +61,7 @@ pu:DropDownHelper.VerticalOffset="-1"
 pu:ShadowHelper.BlurRadius="15"
 pu:ShadowHelper.ShadowDepth="5"
 BorderBrush="LightGray"
-<<<<<<< Updated upstream
-BorderThickness="1.5" Margin="150,259,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-=======
-BorderThickness="1.5" Margin="150,0,0,76" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
->>>>>>> Stashed changes
+BorderThickness="1.5" Margin="150,0,0,75" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 
         <TextBox x:Name="GameNameTextBox"
              Height="36" Width="170"
@@ -74,42 +71,28 @@ BorderThickness="1.5" Margin="150,0,0,76" HorizontalAlignment="Left" VerticalAli
      pu:TextBoxHelper.FocusedForeground="#36AAF7" pu:TextBoxHelper.FocusedBorderBrush="#36AAF7" 
      pu:TextBoxHelper.FocusedShadowColor="#36AAF7"
      pu:ShadowHelper.Opacity="0.5" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
-<<<<<<< Updated upstream
-             Margin="315,259,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-=======
-             Margin="315,0,0,76" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
->>>>>>> Stashed changes
+             Margin="310,0,0,75" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 
         <Button Content="启动游戏!" Height="34" Width="170" 
     pu:ButtonHelper.CornerRadius="4" 
     Background="#36AAF7" Foreground="#FFFFFF"
     pu:ButtonHelper.Icon="&#xe949;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
-<<<<<<< Updated upstream
-    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="315,300,0,0" />
-=======
-    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="315,0,0,37" />
->>>>>>> Stashed changes
+
+    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5" Click="Button_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="310,0,0,40" />
+
         <TextBlock
 Height="20"
 pu:TextBlockHelper.HighlightBackground="LightGray"
 pu:TextBlockHelper.HighlightForeground="Red"
 pu:TextBlockHelper.HighlightRule="FirstOnly"
 pu:TextBlockHelper.HighlightText="内存大小"
-<<<<<<< Updated upstream
 Text="本次启动游戏所使用内存大小" Margin="122,68,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="156"/>
         <Slider VerticalAlignment="Top"
+                HorizontalAlignment="Left"
     Foreground="DimGray"
     pu:SliderHelper.IsTextVisible="True" pu:SliderHelper.TextSpacing="0" pu:SliderHelper.TextStringFormat="N1"
     pu:SliderHelper.TrackThickness="10" 
-    IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="310,68,71,0" Maximum="100" Height="20">
-=======
-Text="本次启动游戏所使用内存大小" Margin="140,0,0,280" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="160"/>
-        <Slider
-    Foreground="DimGray"
-    pu:SliderHelper.IsTextVisible="True" pu:SliderHelper.TextSpacing="0" pu:SliderHelper.TextStringFormat="N1"
-    pu:SliderHelper.TrackThickness="10" 
-    IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="310,0,0,280" Maximum="100" Height="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250">
->>>>>>> Stashed changes
+    IsSnapToTickEnabled="True" TickFrequency="0.5" Margin="310,68,10,0" Maximum="100" Height="20" Width="300">
             <Slider.Background>
                 <LinearGradientBrush>
                     <GradientStop Color="#447CCBFC" />
@@ -123,5 +106,7 @@ Text="本次启动游戏所使用内存大小" Margin="140,0,0,280" HorizontalAl
                 </LinearGradientBrush>
             </pu:SliderHelper.CoveredBackground>
         </Slider>
+
+
     </Grid>
 </Page>

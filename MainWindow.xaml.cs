@@ -400,24 +400,8 @@ namespace MCLaunch
             Debug.WriteLine($"🐾 进程私有内存: {privateMemoryMB} MB");
             Debug.WriteLine($"🐾 GC总内存: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
         }
-        async private void GetJavaVersions()
-        {
-
-
-            var asyncJavas = JavaUtil.EnumerableJavaAsync();
-            await foreach (var java in asyncJavas)
-            {
-                Debug.WriteLine(java);
-                JavaCombo.Items.Add(java);
-            }
-
-
-        }
         public MainWindow()
         {
-
-
-
             InitializeComponent();
 
             MinecraftParser minecraftParser = ".\\.minecraft";
@@ -425,11 +409,6 @@ namespace MCLaunch
             List<MinecraftEntry> Minelist;
             Minelist = minecraftParser.GetMinecrafts();
             CheckMemoryStatus();
-            GetJavaVersions();
-
-            VerCombo.DisplayMemberPath = "Id";
-            VerCombo.SelectedValuePath = "Id";
-            VerCombo.ItemsSource = Minelist;
 
 
 
@@ -439,6 +418,7 @@ namespace MCLaunch
         }
         private static readonly Dictionary<Type, Page> bufferedPages =
        new Dictionary<Type, Page>();
+
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -458,23 +438,7 @@ namespace MCLaunch
             // 使用 Frame 进行导航.
             appFrame.Navigate(page);
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxX.Show("别急,快速打开是不可能的,要想快就捐100000万!!!!!!!(bushi),没给白子充钱导致的(√)");
-            //Launch launch = new();
-            //launch.ALaunch();
-        }
-
-        private void VerCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
 
     }
 }

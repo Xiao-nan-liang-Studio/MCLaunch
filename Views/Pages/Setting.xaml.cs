@@ -16,18 +16,13 @@ using System.Windows.Shapes;
 namespace MCLaunch.Views.Pages
 {
     /// <summary>
-    /// Users.xaml 的交互逻辑
+    /// Setting.xaml 的交互逻辑
     /// </summary>
-    public partial class Users : Page
+    public partial class Setting : Page
     {
-        public Users()
+        public Setting()
         {
             InitializeComponent();
-
-            //this.DataContext = new ViewModels.UserPageViewModel();
-        }
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

@@ -58,14 +58,14 @@ namespace MCLaunch.Views.Pages
 
             MinecraftParser minecraftParser = ".\\.minecraft";
             Init.AInit();
-            List<MinecraftEntry> Minelist;
-            Minelist = minecraftParser.GetMinecrafts();
+            List<MinecraftEntry> Verlist;
+            Verlist = minecraftParser.GetMinecrafts();
             CheckMemoryStatus();
             GetJavaVersions();
 
             VerCombo.DisplayMemberPath = "Id";
             VerCombo.SelectedValuePath = "Id";
-            VerCombo.ItemsSource = Minelist;
+            VerCombo.ItemsSource = Verlist;
 
         }
         private static readonly Dictionary<Type, Page> bufferedPages =
