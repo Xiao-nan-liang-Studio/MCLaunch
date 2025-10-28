@@ -4,6 +4,7 @@ using MinecraftLaunch.Utilities;
 using Panuon.WPF.UI;
 using System.Diagnostics;
 using System.Windows;
+
 namespace MCLaunch.Views.Pages
 {
     /// <summary>
@@ -35,19 +36,19 @@ namespace MCLaunch.Views.Pages
         {
             InitializeComponent();
             MinecraftParser minecraftParser = ".\\.minecraft";
-            Init.AInit();
             List<MinecraftEntry> VerList = minecraftParser.GetMinecrafts();
             CheckMemoryStatus();
             _ = GetJavaVersions();
             VerCombo.DisplayMemberPath = "Id";
             VerCombo.SelectedValuePath = "Id";
             VerCombo.ItemsSource = VerList;
+            
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxX.Show("别急,快速打开是不可能的,要想快就捐100000万!!!!!!!(bushi),没给白子充钱导致的(√)");
-            //Launch launch = new();
-            //launch.ALaunch();
-        }
+            Launch launch = new();
+            _ = launch.ALaunch();
     }
+        }
 }

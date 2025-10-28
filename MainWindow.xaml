@@ -84,7 +84,7 @@
             <ListBoxItem Content="用户" Tag="{x:Type pages:Users}"  Width="70"/>
             <ListBoxItem Content="设置"  Tag="{x:Type pages:Setting}" Width="70"/>
         </ListBox>
-
+        
         <Frame Grid.Column="1" Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,110,0,0"/>
     </Grid>
 

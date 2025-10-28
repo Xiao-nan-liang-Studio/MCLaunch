@@ -9,30 +9,16 @@ using MinecraftLaunch.Extensions;
 using MinecraftLaunch.Launch;
 using MinecraftLaunch.Utilities;
 using Panuon.WPF.UI;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace MCLaunch
 {
 
-    public class Launch()
+    public class Launch
     {
 
-        public static async void ALaunch()
+        public async Task ALaunch()
         {
 
             var sw = Stopwatch.StartNew();
@@ -294,55 +280,56 @@ namespace MCLaunch
             #region 本地 Java 读取
 
             var asyncJavas = JavaUtil.EnumerableJavaAsync();
-            await foreach (var java in asyncJavas)
-                Console.WriteLine(java);
+                await foreach (var java in asyncJavas)
+                    Console.WriteLine(java);
 
             #endregion
 
             #region NBT 文件操作
 
-            //var minecraft = minecraftParser.GetMinecraft("1.12.2");
-            //var save = await minecraft.GetNBTParser().ParseSaveAsync("New World");
-            //Console.WriteLine($"存档名：{save.LevelName}");
-            //Console.WriteLine($"种子：{save.Seed}");
-            //Console.WriteLine($"游戏模式：{save.GameType}");
-            //Console.WriteLine($"版本：{save.Version}");
+                //var minecraft = minecraftParser.GetMinecraft("1.12.2");
+                //var save = await minecraft.GetNBTParser().ParseSaveAsync("New World");
+                //Console.WriteLine($"存档名：{save.LevelName}");
+                //Console.WriteLine($"种子：{save.Seed}");
+                //Console.WriteLine($"游戏模式：{save.GameType}");
+                //Console.WriteLine($"版本：{save.Version}");
 
-            //var rootTag = @"C:\Users\wxysd\AppData\Roaming\ModrinthApp\profiles\Fabulously Optimized\servers.dat".GetNBTParser()
-            //    .GetReader()
-            //    .ReadRootTag();
+                //var rootTag = @"C:\Users\wxysd\AppData\Roaming\ModrinthApp\profiles\Fabulously Optimized\servers.dat".GetNBTParser()
+                //    .GetReader()
+                //    .ReadRootTag();
 
-            //var entries = rootTag["servers"].AsTagList<TagCompound>().FirstOrDefault();
+                //var entries = rootTag["servers"].AsTagList<TagCompound>().FirstOrDefault();
 
-            //Console.WriteLine(entries["ip"].AsString());
-            //Console.WriteLine(entries["name"].AsString());
+                //Console.WriteLine(entries["ip"].AsString());
+                //Console.WriteLine(entries["name"].AsString());
 
-            #endregion
+                #endregion
 
             #region 启动
-            //var newAccount = await authenticator.RefreshAsync(account);
-            //Console.WriteLine(newAccount.Name);//刷新访问令牌
-            minecraft = minecraftParser.GetMinecraft("1.20.1");
+
+                //var newAccount = await authenticator.RefreshAsync(account);
+                //Console.WriteLine(newAccount.Name);//刷新访问令牌
+                minecraft = minecraftParser.GetMinecraft("1.20.1");
 
 
-            MinecraftRunner runner = new(new LaunchConfig
-            {
-                Account = new OfflineAuthenticator().Authenticate("Yang114"),
-                MaxMemorySize = 2048,
-                MinMemorySize = 512,
-                LauncherName = "MinecraftLaunch",
-                JavaPath = minecraft.GetAppropriateJava(await asyncJavas.ToListAsync()),
-            }, minecraftParser);
+                MinecraftRunner runner = new(new LaunchConfig
+                {
+                    Account = new OfflineAuthenticator().Authenticate("Yang114"),
+                    MaxMemorySize = 2048,
+                    MinMemorySize = 512,
+                    LauncherName = "MinecraftLaunch",
+                    JavaPath = minecraft.GetAppropriateJava(await asyncJavas.ToListAsync()),
+                }, minecraftParser);
 
-            var process = await runner.RunAsync(minecraft);
+                var process = await runner.RunAsync(minecraft);
 
-            process.Started += (_, _) => Console.WriteLine("Done Launcher Minecraft Java successful!成功了!!!");
-            process.OutputLogReceived += (_, arg) => Console.WriteLine(arg.Data);
-            process.Exited += (_, arg) =>
-            {
-                Console.WriteLine();
-                Console.WriteLine(string.Join(Environment.NewLine, process.ArgumentList));
-            };
+                process.Started += (_, _) => Console.WriteLine("Done Launcher Minecraft Java successful!成功了!!!");
+                process.OutputLogReceived += (_, arg) => Console.WriteLine(arg.Data);
+                process.Exited += (_, _) =>
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(string.Join(Environment.NewLine, process.ArgumentList));
+                };
 
             #endregion
 
@@ -363,7 +350,7 @@ namespace MCLaunch
     }
     public class Init
     {
-        public static void AInit()
+        public void AInit()
         {
             InitializeHelper.Initialize(settings =>
             {
@@ -403,7 +390,8 @@ namespace MCLaunch
         public MainWindow()
         {
             InitializeComponent();
-            Init.AInit();
+            Init init = new();
+            init.AInit();
             CheckMemoryStatus();
         }
         private static readonly Dictionary<Type, Page> bufferedPages =
