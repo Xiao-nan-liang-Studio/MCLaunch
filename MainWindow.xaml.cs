@@ -403,18 +403,8 @@ namespace MCLaunch
         public MainWindow()
         {
             InitializeComponent();
-
-            MinecraftParser minecraftParser = ".\\.minecraft";
             Init.AInit();
-            List<MinecraftEntry> Minelist;
-            Minelist = minecraftParser.GetMinecrafts();
             CheckMemoryStatus();
-
-
-
-
-
-
         }
         private static readonly Dictionary<Type, Page> bufferedPages =
        new Dictionary<Type, Page>();
@@ -437,6 +427,7 @@ namespace MCLaunch
 
             // 使用 Frame 进行导航.
             appFrame.Navigate(page);
+
         }
         
 

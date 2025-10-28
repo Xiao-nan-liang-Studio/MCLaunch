@@ -63,7 +63,7 @@
         <ListBox
             x:Name="navMenu"
             Height="70"
-            Width="400"
+            Width="220"
             SelectionChanged="ListBox_SelectionChanged"
             pu:ListBoxHelper.CornerRadius="5"
             pu:ListBoxHelper.ItemsHeight="50"
@@ -80,9 +80,9 @@
                     <StackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <ListBoxItem Content="启动游戏" Tag="{x:Type pages:Go}"  Width="70"/>
-            <ListBoxItem Content="用户" Tag="{x:Type pages:Users}"   Width="70"/>
-            <ListBoxItem Content="设置" Tag="{x:Type pages:Setting}" Width="70"/>
+            <ListBoxItem Content="启动游戏" Tag="{x:Type pages:Go}"     Width="70"/>
+            <ListBoxItem Content="用户" Tag="{x:Type pages:Users}"  Width="70"/>
+            <ListBoxItem Content="设置"  Tag="{x:Type pages:Setting}" Width="70"/>
         </ListBox>
 
         <Frame Grid.Column="1" Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,110,0,0"/>
