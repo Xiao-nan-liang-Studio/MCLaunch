@@ -50,7 +50,7 @@
 此项目代码参考了[MinecraftLaunch](https://github.com/Lunova-Studio/MinecraftLaunch)  
 <img src="https://lunova.studio/wp-content/uploads/2025/07/MinecraftLaunch-scaled.png" alt="pARPxN8.png" border="0" />  
 ### Panuon
-此项目使用了[Panuon.WPF.UI](https://github.com/Panuon/Panuon.WPF.UI)  图形库
+此项目使用了[Panuon.WPF.UI](https://github.com/Panuon/Panuon.WPF.UI)  图形库<br>
 <img src="https://avatars.githubusercontent.com/u/82140110?s=200&v=4" alt="pARPxN8.png" border="0" />  
 
 
