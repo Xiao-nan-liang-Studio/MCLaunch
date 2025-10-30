@@ -8,7 +8,6 @@ using MinecraftLaunch.Components.Parser;
 using MinecraftLaunch.Extensions;
 using MinecraftLaunch.Launch;
 using MinecraftLaunch.Utilities;
-using Panuon.WPF.UI;
 using System.Diagnostics;
 using System.Windows.Controls;
 
@@ -17,7 +16,6 @@ namespace MCLaunch
 
     public class Launch
     {
-
         public async Task ALaunch()
         {
 
@@ -284,7 +282,7 @@ namespace MCLaunch
                     Console.WriteLine(java);
 
             #endregion
-
+            
             #region NBT 文件操作
 
                 //var minecraft = minecraftParser.GetMinecraft("1.12.2");
@@ -373,15 +371,15 @@ namespace MCLaunch
     /// 
     // 1. 创建ViewModel
 
-    public partial class MainWindow : WindowX
+    public partial class MainWindow
     {
         private void CheckMemoryStatus()
         {
             var process = Process.GetCurrentProcess();
 
             // 当前进程内存使用
-            long processMemoryMB = process.WorkingSet64 / 1024 / 1024;
-            long privateMemoryMB = process.PrivateMemorySize64 / 1024 / 1024;
+            var processMemoryMB = process.WorkingSet64 / 1024 / 1024;
+            var privateMemoryMB = process.PrivateMemorySize64 / 1024 / 1024;
 
             Debug.WriteLine($"🐾 进程工作集内存: {processMemoryMB} MB");
             Debug.WriteLine($"🐾 进程私有内存: {privateMemoryMB} MB");

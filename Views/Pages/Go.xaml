@@ -62,7 +62,27 @@ pu:ShadowHelper.BlurRadius="15"
 pu:ShadowHelper.ShadowDepth="5"
 BorderBrush="LightGray"
 BorderThickness="1.5" Margin="150,0,0,75" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+        <Button Content="寻找Java版本" Width="110" Height="35" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,75"
+                pu:ButtonHelper.CornerRadius="4" 
+                Background="#36AAF7" Foreground="#FFFFFF"
+                pu:ButtonHelper.Icon="&#xe928;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
 
+                pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                Click="JavaButton_CilckClick"></Button>
+        <Button Content="寻找游戏版本" Width="110" Height="35" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,40"
+                pu:ButtonHelper.CornerRadius="4" 
+                Background="#36AAF7" Foreground="#FFFFFF"
+                pu:ButtonHelper.Icon="&#xe928;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
+
+                pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                Click="VerButton_CilckClick"></Button>
+        <Button Content="测试内存" Width="110" Height="35" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="100,0,0,300"
+                pu:ButtonHelper.CornerRadius="4" 
+                Background="#36AAF7" Foreground="#FFFFFF"
+                pu:ButtonHelper.Icon="&#xe928;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,10,0"
+
+                pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                Click="RamTestButton_CilckClick"></Button>
         <TextBox x:Name="GameNameTextBox"
              Height="36" Width="170"
               pu:TextBoxHelper.CornerRadius="4"

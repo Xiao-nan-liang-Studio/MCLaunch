@@ -18,31 +18,24 @@ namespace MCLaunch.Views.Pages
             // 当前进程内存使用
             var processMemoryMb = process.WorkingSet64 / 1024 / 1024;
             var privateMemoryMb = process.PrivateMemorySize64 / 1024 / 1024;
-            Debug.WriteLine($"🐾 进程工作集内存: {processMemoryMb} MB");
-            Debug.WriteLine($"🐾 进程私有内存: {privateMemoryMb} MB");
-            Debug.WriteLine($"🐾 GC总内存: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
+            Console.WriteLine($"🐾 进程工作集内存: {processMemoryMb} MB");
+            Console.WriteLine($"🐾 进程私有内存: {privateMemoryMb} MB");
+            Console.WriteLine($"🐾 GC总内存: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
         }
         private async Task GetJavaVersions()
         {
             var asyncJavas = JavaUtil.EnumerableJavaAsync();
             await foreach (var java in asyncJavas)
             {
-                Debug.WriteLine(java);
+                Console.WriteLine(java);
                 JavaCombo.Items.Add(java);
             }
+            Console.WriteLine("好了");
 
         }
         public Go()
         {
             InitializeComponent();
-            MinecraftParser minecraftParser = ".\\.minecraft";
-            List<MinecraftEntry> VerList = minecraftParser.GetMinecrafts();
-            CheckMemoryStatus();
-            _ = GetJavaVersions();
-            VerCombo.DisplayMemberPath = "Id";
-            VerCombo.SelectedValuePath = "Id";
-            VerCombo.ItemsSource = VerList;
-            
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -50,5 +43,26 @@ namespace MCLaunch.Views.Pages
             Launch launch = new();
             _ = launch.ALaunch();
     }
+
+        private void JavaButton_CilckClick(object sender, RoutedEventArgs e)
+        {
+            MessageBoxX.Show("别急,等一下");
+            _ = GetJavaVersions();
         }
+
+        private void VerButton_CilckClick(object sender, RoutedEventArgs e)
+        {
+            MessageBoxX.Show("别急,等一下");
+            MinecraftParser minecraftParser = ".\\.minecraft";
+            List<MinecraftEntry> VerList = minecraftParser.GetMinecrafts();
+            VerCombo.DisplayMemberPath = "Id";
+            VerCombo.SelectedValuePath = "Id";
+            VerCombo.ItemsSource = VerList;
+        }
+
+        private void RamTestButton_CilckClick(object sender, RoutedEventArgs e)
+        {
+            CheckMemoryStatus();
+        }
+    }
 }
