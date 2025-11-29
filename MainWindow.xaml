@@ -7,9 +7,9 @@
               xmlns:pages="clr-namespace:MCLaunch.Views.Pages"
               xmlns:pu="https://opensource.panuon.com/wpf-ui" 
               mc:Ignorable="d"
-        Title="FooView" Height="500" Width="720" MinHeight="500" MinWidth="720"
+        Title="FooView" Height="500" Width="720" MinHeight="650" MinWidth="845"
               pu:WindowXCaption.Height="40"
-              pu:WindowXCaption.Buttons="Close">
+              pu:WindowXCaption.Buttons="ALL" Loaded="Window_Loaded">
     <pu:WindowXCaption.HeaderTemplate>
         <DataTemplate>
             <StackPanel Orientation="Horizontal">
@@ -52,6 +52,16 @@
                 </pu:DropDown.Content>
                 <StackPanel Height="150"
                             Width="120">
+                    <ComboBox></ComboBox>
+                    <TextBox x:Name="GameNameTextBox"
+                             Height="36" Width="170"
+                             pu:TextBoxHelper.CornerRadius="4"
+                             pu:TextBoxHelper.Icon="&#xe939;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}"
+                             pu:TextBoxHelper.Watermark="请输入游戏用户名"
+                             pu:TextBoxHelper.FocusedForeground="#36AAF7" pu:TextBoxHelper.FocusedBorderBrush="#36AAF7" 
+                             pu:TextBoxHelper.FocusedShadowColor="#36AAF7"
+                             pu:ShadowHelper.Opacity="0.5" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                             Margin="310,0,0,75" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
                 </StackPanel>
             </pu:DropDown>
         </StackPanel>
@@ -61,7 +71,7 @@
         <ListBox
             x:Name="navMenu"
             Height="70"
-            Width="220"
+            Width="290"
             SelectionChanged="ListBox_SelectionChanged"
             pu:ListBoxHelper.CornerRadius="5"
             pu:ListBoxHelper.ItemsHeight="50"
@@ -81,9 +91,10 @@
             <ListBoxItem Content="启动游戏" Tag="{x:Type pages:Go}"     Width="70"/>
             <ListBoxItem Content="用户" Tag="{x:Type pages:Users}"  Width="70"/>
             <ListBoxItem Content="设置"  Tag="{x:Type pages:Setting}" Width="70"/>
+            <ListBoxItem Content="安装" Tag="{x:Type pages:install}" Width="70"/>
         </ListBox>
         
-        <Frame Grid.Column="1" Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,110,0,0"/>
+        <Frame Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,70,0,0"/>
     </Grid>
 
 </pu:WindowX>

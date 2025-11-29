@@ -1,0 +1,96 @@
+﻿name: TWLunar_Launcher 自动构建
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["0.1"]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      v: ${{ steps.date.outputs.version }}
+      y: ${{ steps.date.outputs.y }}
+      md: ${{ steps.date.outputs.md }}
+      hm: ${{ steps.date.outputs.hm }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Generate version
+        id: date
+        # echo "version=$(date +'%Y.%m%d.%H.%M')" >> $GITHUB_OUTPUT
+        # 上面是旧的生成版本号
+        run: |
+          echo "version=0.0.1.${{ github.run_number }}" >> $GITHUB_OUTPUT
+          echo "y=$(date +'%Y')" >> $GITHUB_OUTPUT
+          echo "md=$(date +'%m%d')" >> $GITHUB_OUTPUT
+          echo "hm=$(date +'%H%M')" >> $GITHUB_OUTPUT
+      - name: Show version
+        run: |
+          echo "Build version: ${{ steps.date.outputs.version }}"
+  # Windows 平台构建
+  
+  win-x64:
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Sub-Module
+        run: |
+          git pull
+          git submodule update --init --recursive --remote
+
+
+      - name: Build (x64)
+        run: |
+          cd ./src/TWLunar_Launcher
+          dotnet publish -c Release -r win-x64 `
+            /p:PublishSingleFile=true `
+            /p:PublishReadyToRun=true `
+            /p:IncludeNativeLibrariesForSelfExtract=true `
+            /p:SelfContained=true `
+            /p:Version=${{ needs.version.outputs.v }} `
+            -o "../../publish/win-x64" -p:DebugType=none -p:DebugSymbols=false
+
+      - name: Create ZIP (x64)
+        run: |
+          Compress-Archive -Path "./publish/win-x64/*" -DestinationPath "./TWLunar_Launcher-${{ needs.version.outputs.v }}.win-x64.zip" -Force
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name:TWLunar_Launcher.win-x64.zip
+          path: "./TWLunar_Launcher-${{ needs.version.outputs.v }}.win-x64.zip"
+
+ 
+  # 发布阶段
+  publish:
+    needs:
+      - version
+      - win-x64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare release info
+        id: release
+        run: |
+          echo "date=$(date +'%Y-%m-%d.%H-%M-%S')" >> $GITHUB_OUTPUT
+          echo "title=v${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
+          echo "tag=${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
+      - name: Download-TWLunar_Launcher.win-x64.zip
+        uses: actions/download-artifact@v4
+        with:
+          name: TWLunar_Launcher.win-x64.zip
+          path: ./artifacts/
+      - name: Publish Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.TOKEN }}"
+          title: "Preview v${{ needs.version.outputs.v }}"
+          automatic_release_tag: "TWLunar_Launcher.Preview-${{ needs.version.outputs.v }}"
+          prerelease: false
+          files: |
+            ./artifacts/*.zip

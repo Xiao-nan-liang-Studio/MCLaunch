@@ -1,0 +1,88 @@
+﻿<Page x:Class="MCLaunch.Views.Pages.install"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:pu="https://opensource.panuon.com/wpf-ui"
+      mc:Ignorable="d"
+      Title="install" d:DesignHeight="370" d:DesignWidth="620"
+      Loaded="Install_OnLoaded">
+    <Grid>
+        <ListBox x:Name="VersionList" Width="600" Height="250"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"
+                 pu:ListBoxHelper.CornerRadius="5"
+                 pu:ListBoxHelper.ItemsHeight="50"
+                 pu:ListBoxHelper.ItemsHoverBackground="#5ebbf7"
+                 pu:ListBoxHelper.ItemsHoverBorderBrush="#5ebbf7"
+                 pu:ListBoxHelper.ItemsHoverBorderThickness="2"
+                 pu:ListBoxHelper.ItemsHoverCornerRadius="4,4,4,4"
+                 pu:ListBoxHelper.ItemsSelectedBackground="#5ebbf7"
+                 pu:ListBoxHelper.ItemsSelectedCornerRadius="4,4,4,4"
+                 BorderBrush="White">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Id}" FontWeight="Bold"/>
+                        <TextBlock Text="(" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Type}" Foreground="Gray"/>
+                        <TextBlock Text=")" Foreground="Gray"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Width="250" Height="40" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="安装!" Height="40" Width="60" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF"
+                    pu:ButtonHelper.Icon="&#xe9a2;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"/>
+            <Button Content="安装Java" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF"
+                    pu:ButtonHelper.Icon="&#xe9a2;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                    Click="JavaInstallCilck" />
+            <Button Content="安装模组加载器" Height="40" Width="110" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF"
+                    pu:ButtonHelper.Icon="&#xe990;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"/>
+        </StackPanel>
+        
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
+            <Button Content="快照版本" Height="40" Width="70" VerticalAlignment="Top"
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF"
+                    pu:ButtonHelper.Icon="&#xe94d;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                    Click="KuaizhaoButton_CilckClick" />
+            <Button Content="正式版本" Height="40" Width="70" 
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF" VerticalAlignment="Top"
+                    pu:ButtonHelper.Icon="&#xe94e;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                    Click="ZhengshiButton_CilckClickClick" />
+            <Button Content="全部版本" Height="40" Width="70" 
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF" VerticalAlignment="Top" Click="ALLButton_CilckClick"
+                    pu:ButtonHelper.Icon="&#xe94e;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"/>
+            
+            <Button Width="70" Height="40" Content="考古队版" VerticalAlignment="Top"
+                    pu:ButtonHelper.CornerRadius="4" 
+                    Background="#36AAF7" Foreground="#FFFFFF"
+                    pu:ButtonHelper.Icon="&#xe9a5;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                    Click="OldVerButton_Click"></Button>
+        </StackPanel>
+        <Button Width="70" Height="40" Content="测试" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                pu:ButtonHelper.CornerRadius="4" 
+                Background="#36AAF7" Foreground="#FFFFFF"
+                pu:ButtonHelper.Icon="&#xe94d;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
+                pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                Click="TestButton_CilckClick"></Button>
+    </Grid>
+</Page>

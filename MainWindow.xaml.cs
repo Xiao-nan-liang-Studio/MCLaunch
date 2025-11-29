@@ -9,42 +9,50 @@ using MinecraftLaunch.Extensions;
 using MinecraftLaunch.Launch;
 using MinecraftLaunch.Utilities;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
+using MCLaunch.MyClass;
+using MinecraftLaunch.Base.Models.Authentication;
+using Panuon.WPF.UI;
 
 namespace MCLaunch
 {
 
     public class Launch
     {
+        public Launch()
+        {
+        }
+
         public async Task ALaunch()
         {
 
             var sw = Stopwatch.StartNew();
             #region 原版安装器
 
-            var entry = (await VanillaInstaller.EnumerableMinecraftAsync())
-                .First(x => x.Id == "1.20.1");
-
-            var installer = VanillaInstaller.Create(".\\.minecraft", entry);
-            installer.ProgressChanged += (_, arg) =>
-                Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:F2}%" : $"{arg.Progress * 100:F2}%")}");
-
-            var minecraft = await installer.InstallAsync();
-            Console.WriteLine(minecraft.Id);
+            // var entry = (await VanillaInstaller.EnumerableMinecraftAsync())
+            //     .First(x => x.Id == "1.20.1");
+            //
+            // var installer = VanillaInstaller.Create(".\\.minecraft", entry);
+            // installer.ProgressChanged += (_, arg) =>
+            //     Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:F2}%" : $"{arg.Progress * 100:F2}%")}");
+            //
+            // var minecraft = await installer.InstallAsync();
+            // Console.WriteLine(minecraft.Id);
 
             #endregion
 
             #region Forge 安装器
 
-            //var entry1 = (await ForgeInstaller.EnumerableForgeAsync("1.21.8"))
-            //    .First();
+            var entry1 = (await ForgeInstaller.EnumerableForgeAsync("1.21.8"))
+                .First();
 
-            //var installer1 = ForgeInstaller.Create("C:\\Users\\wxysd\\Desktop\\temp\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
-            //installer1.ProgressChanged += (_, arg) =>
-            //    Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+            var installer1 = ForgeInstaller.Create("C:\\Users\\wxysd\\Desktop\\temp\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
+            installer1.ProgressChanged += (_, arg) =>
+                Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
 
-            //var minecraft1 = await installer1.InstallAsync();
-            //Console.WriteLine(minecraft1.Id);
+            var minecraft1 = await installer1.InstallAsync();
+            Console.WriteLine(minecraft1.Id);
 
             #endregion
 
@@ -219,19 +227,15 @@ namespace MCLaunch
 
             #region 微软验证
 
-            //MicrosoftAuthenticator authenticator = new("291eedbc-7ca4-4af2-9231-9c9ff1009c10");
-            //var oAuth2Token = await authenticator.DeviceFlowAuthAsync(x => {
-            //    Console.WriteLine(x.UserCode);
-            //    Console.WriteLine(x.VerificationUrl);
-            //});
-
-
-            //var account = await authenticator.AuthenticateAsync(oAuth2Token);
-            //Console.WriteLine(account.Name);
-            //Console.WriteLine();
-
-
-
+            MicrosoftAuthenticator authenticator = new("291eedbc-7ca4-4af2-9231-9c9ff1009c10");
+            var oAuth2Token = await authenticator.DeviceFlowAuthAsync(x =>
+            {
+                MessageBoxX.Show($"请访问以登录:{x.VerificationUrl}");
+                MessageBoxX.Show($"输入一次性代码:{x.UserCode}");
+            });
+            var account = await authenticator.AuthenticateAsync(oAuth2Token);
+            Console.WriteLine(account.Name);
+            Console.WriteLine();
             #endregion
 
             #region 第三方验证
@@ -256,7 +260,7 @@ namespace MCLaunch
 
                 if (!x.IsVanilla)
                 {
-                    Console.WriteLine("Mod 加载器：" + string.Join("，", (x as ModifiedMinecraftEntry)?.ModLoaders.Select(x => $"{x.Type}_{x.Version}")!));
+                    Console.WriteLine("Mod 加载器：" + string.Join("，", (x as ModifiedMinecraftEntry)?.ModLoaders.Select(Mod => $"{Mod.Type}_{Mod.Version}")!));
                 }
 
                 Console.WriteLine();
@@ -276,10 +280,13 @@ namespace MCLaunch
             #endregion
 
             #region 本地 Java 读取
-
             var asyncJavas = JavaUtil.EnumerableJavaAsync();
+            List<JavaEntry> javaList = [];
                 await foreach (var java in asyncJavas)
+                {
                     Console.WriteLine(java);
+                    javaList.Add(java);
+                }
 
             #endregion
             
@@ -305,23 +312,23 @@ namespace MCLaunch
 
             #region 启动
 
-                //var newAccount = await authenticator.RefreshAsync(account);
-                //Console.WriteLine(newAccount.Name);//刷新访问令牌
-                minecraft = minecraftParser.GetMinecraft("1.20.1");
-
+                var newAccount = await authenticator.RefreshAsync(account);
+                Console.WriteLine(newAccount.Name);//刷新访问令牌
+                var minecraft = minecraftParser.GetMinecraft("1.20.1");
 
                 MinecraftRunner runner = new(new LaunchConfig
                 {
-                    Account = new OfflineAuthenticator().Authenticate("Yang114"),
+                    Account = newAccount,
                     MaxMemorySize = 2048,
                     MinMemorySize = 512,
                     LauncherName = "MinecraftLaunch",
-                    JavaPath = minecraft.GetAppropriateJava(await asyncJavas.ToListAsync()),
+                    JavaPath = minecraft.GetAppropriateJava(javaList),
                 }, minecraftParser);
 
                 var process = await runner.RunAsync(minecraft);
-
-                process.Started += (_, _) => Console.WriteLine("Done Launcher Minecraft Java successful!成功了!!!");
+                process.Started += (_, _) => { Console.WriteLine("Done Launcher Minecraft Java successful!成功了!!!");
+                    MessageBoxX.Show("游戏启动成功!");
+                };
                 process.OutputLogReceived += (_, arg) => Console.WriteLine(arg.Data);
                 process.Exited += (_, _) =>
                 {
@@ -332,70 +339,67 @@ namespace MCLaunch
             #endregion
 
             #region 错误分析
-
-            LogAnalyzer analyzer = new(minecraft);
-            var result = analyzer.Analyze();
-            foreach (var item in result.CrashReasons)
-            {
-                Console.WriteLine(item);
-            }
+            //
+            // LogAnalyzer analyzer = new(minecraft);
+            // var result = analyzer.Analyze();
+            // foreach (var item in result.CrashReasons)
+            // {
+            //     Console.WriteLine(item);
+            // }
 
             #endregion
 
             Console.WriteLine("Done!");
             Console.WriteLine($"总耗时：{sw.Elapsed:hh\\:mm\\:ss}");
         }
-    }
-    public class Init
-    {
-        public void AInit()
+
+        public async Task login()
         {
-            InitializeHelper.Initialize(settings =>
-            {
-                settings.MaxThread = 256;
-                settings.MaxFragment = 128;
-                settings.MaxRetryCount = 4;
-                settings.IsEnableMirror = false;
-                settings.IsEnableFragment = false;
-                //settings.CurseForgeApiKey = "Your Curseforge API";
-                settings.UserAgent = "MLTest/1.0";
+            #region 微软验证
+            Console.WriteLine("登录...");
+            MicrosoftAuthenticator authenticator = new("5b8c4951-abef-4351-a3fe-65096bb8e76b");
+            Console.WriteLine("登录...");
+            var oAuth2Token = await authenticator.DeviceFlowAuthAsync(deviceCode => {
+                Console.WriteLine($"请访问以登录: {deviceCode.VerificationUrl}");
+                Console.WriteLine($"输入一次性代码: {deviceCode.UserCode}");
+                if (MessageBoxX.Show($"请访问以登录: {deviceCode.VerificationUrl}", "警告", MessageBoxButton.OKCancel, MessageBoxIcon.Info) == MessageBoxResult.OK)
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", deviceCode.VerificationUrl);
+                    Clipboard.SetDataObject(deviceCode.UserCode);
+                    Console.WriteLine("已复制一次性代码到剪贴板");
+                }
+                else
+                {
+                    Console.WriteLine("测试");
+
+                }
             });
-
-
+            var account = await authenticator.AuthenticateAsync(oAuth2Token);
+            MessageBoxX.Show($"登录成功: {account.Name}", "提示", MessageBoxButton.OK, MessageBoxIcon.Info);
+            Console.WriteLine(account.Name);
+            #endregion
         }
     }
+
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    // 1. 创建ViewModel
+    //创建ViewModel
 
     public partial class MainWindow
     {
-        private void CheckMemoryStatus()
-        {
-            var process = Process.GetCurrentProcess();
-
-            // 当前进程内存使用
-            var processMemoryMB = process.WorkingSet64 / 1024 / 1024;
-            var privateMemoryMB = process.PrivateMemorySize64 / 1024 / 1024;
-
-            Debug.WriteLine($"🐾 进程工作集内存: {processMemoryMB} MB");
-            Debug.WriteLine($"🐾 进程私有内存: {privateMemoryMB} MB");
-            Debug.WriteLine($"🐾 GC总内存: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
-        }
         public MainWindow()
         {
             InitializeComponent();
-            Init init = new();
-            init.AInit();
-            CheckMemoryStatus();
         }
         private static readonly Dictionary<Type, Page> bufferedPages =
        new Dictionary<Type, Page>();
-
-
+        
+        /// <summary>
+        /// 页面跳转逻辑
+        /// </summary>
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // 如果选择项不是 ListBoxItem, 则返回
@@ -415,7 +419,14 @@ namespace MCLaunch
             appFrame.Navigate(page);
 
         }
-        
 
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var init = new Init();
+            init.AInit();
+            var asyncJavas = JavaUtil.EnumerableJavaAsync();
+            await foreach (var java in asyncJavas)
+                Console.WriteLine(java);
+        }
     }
 }
