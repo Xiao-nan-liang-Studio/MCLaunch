@@ -48,12 +48,10 @@ jobs:
       - name: Build (x64)
         run: |
           dotnet publish -c Release -r win-x64 `
-            /p:PublishSingleFile=true `
             /p:PublishReadyToRun=true `
-            /p:IncludeNativeLibrariesForSelfExtract=true `
             /p:SelfContained=true `
             /p:Version=${{ needs.version.outputs.v }} `
-            -o "../../publish/win-x64" -p:DebugType=none -p:DebugSymbols=false
+            -o "./publish/win-x64"
 
       - name: Create ZIP (x64)
         run: |
