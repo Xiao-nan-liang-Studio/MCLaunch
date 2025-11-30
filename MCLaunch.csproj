@@ -21,6 +21,24 @@
   <ItemGroup>
     <ProjectReference Include="..\库\MinecraftLaunch.Base\MinecraftLaunch.Base.csproj" />
     <ProjectReference Include="..\库\MinecraftLaunch\MinecraftLaunch.csproj" />
+    <ProjectReference Include="库\MinecraftLaunch.Base\MinecraftLaunch.Base.csproj" />
+    <ProjectReference Include="库\MinecraftLaunch\MinecraftLaunch.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="库\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="库\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="库\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="库\**" />
   </ItemGroup>
 
 </Project>
