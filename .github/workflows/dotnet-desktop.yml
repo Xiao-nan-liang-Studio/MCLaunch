@@ -54,11 +54,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prepare release info
-          id: release
-          run: |
-            echo "date=$(date +'%Y-%m-%d.%H-%M-%S')" >> $GITHUB_OUTPUT
-            echo "title=v${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
-            echo "tag=${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
+        id: release
+        run: |
+          echo "date=$(date +'%Y-%m-%d.%H-%M-%S')" >> $GITHUB_OUTPUT
+          echo "title=v${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
+          echo "tag=${{ needs.version.outputs.v }}" >> $GITHUB_OUTPUT
             
       - name: Download-TWLunar_Launcher.win-x64.zip
         uses: actions/download-artifact@v4
