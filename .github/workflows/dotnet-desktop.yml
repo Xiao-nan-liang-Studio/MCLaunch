@@ -33,7 +33,7 @@ jobs:
         
       - name: Build (x64)
         run: |
-          dotnet publish -c Release win-x64 `
+          dotnet publish ./MCLaunch.sln -c Release win-x64 `
             /p:PublishSingleFile=true `
             /p:PublishReadyToRun=true `
             /p:Version=${{ needs.version.outputs.v }} `
