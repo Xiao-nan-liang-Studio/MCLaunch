@@ -10,7 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>下一代全能高效化的 Minecraft 启动核心</Description>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Authors>Lunova-Studio</Authors>
 		<LangVersion>latest</LangVersion>

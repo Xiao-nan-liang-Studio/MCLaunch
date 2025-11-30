@@ -33,11 +33,11 @@ jobs:
         
       - name: Build (x64)
         run: |
-          dotnet publish -c Debug -r win-x64 `
+          dotnet publish -c Release win-x64 `
             /p:PublishSingleFile=true `
             /p:PublishReadyToRun=true `
             /p:Version=${{ needs.version.outputs.v }} `
-            -o "./publish/win-x64"
+            -o "./publish/win-x64" -p:DebugType=none -p:DebugSymbols=false
       - name: Create ZIP (x64)
         run: |
           Compress-Archive -Path "./publish/win-x64/*" -DestinationPath "./TWLunar_Launcher-${{ needs.version.outputs.v }}.win-x64.zip" -Force
