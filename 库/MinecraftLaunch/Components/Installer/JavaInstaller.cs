@@ -235,7 +235,7 @@ public sealed class JavaInstaller{
                 double speed = globalDownloadedBytes / Math.Max(1.0, globalStopwatch.Elapsed.TotalSeconds); // Bytes/s
 
                 ReportProgress(
-                    InstallStep.ExtractingFiles,
+                    InstallStep.DownloadJava,
                     overallProgress,
                     TaskStatus.Running,
                     snap,
@@ -258,7 +258,7 @@ public sealed class JavaInstaller{
 
     // 最终 100%
     ReportProgress(
-        InstallStep.ExtractingFiles,
+        InstallStep.DownloadJava,
         1.0,
         TaskStatus.Running,
         totalFiles,
