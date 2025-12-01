@@ -1,25 +1,16 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using Flurl.Http;
 using MinecraftLaunch.Base.Models.Network;
 using MinecraftLaunch.Components.Installer;
 using Panuon.WPF.UI;
 using MCLaunch.MyClass;
+using MinecraftLaunch.Base.EventArgs;
 using Serilog;
 using static System.Environment;
 
 namespace MCLaunch.Views.Pages;
-public partial class install
+public partial class Install
 {
-    public void InitLog()
-    {
-        var currentDateTime = DateTime.Now;
-        using var log = new LoggerConfiguration()
-            .WriteTo.File("./Log/log" + currentDateTime.ToString("d"))
-            .CreateLogger();
-        
-    }
-    private string IniFileName { get; set; } = CurrentDirectory + "\\Launcher\\Steup.ini";
     public class VersionInfo(VersionManifestEntry entry)
     {
         public string Id { get; set; } = entry.Id;
@@ -109,10 +100,24 @@ public partial class install
             Log.Information("[安装界面]安装java按钮按下,开始安装Java!");
             Log.Information("[安装界面],安装路径:" + CurrentDirectory + @"\Launcher\Java");
             Console.WriteLine("安装路径:" + CurrentDirectory + @"\Launcher\Java");
-            javaInstaller.ProgressChanged += (_,ee) =>
+            // 定义一个 handler 变量，这样才能在内部解除绑定
+            EventHandler<InstallProgressChangedEventArgs>? handler = null;
+            handler = (_, ee) =>
             {
-                Log.Information("[安装界面],Java安装进度: " + ee.Progress * 100 + "%" + " Java安装步骤:" + ee.StepName + " Java下载速度:" + ee.Speed / 1024*1024 + "MB/s");
+                Log.Information("[Java安装],Java安装进度: {Progress}% Java安装步骤:{Step} 下载速度:{Speed} MB/s",
+                    ee.Progress * 100,
+                    ee.StepName,
+                    ee.Speed / 1024 / 1024
+                );
+                // 当进度达到 100% 时，自动退订
+                if (ee.Progress >= 1.0)
+                {
+                    javaInstaller.ProgressChanged -= handler!;
+                    Log.Information("[Java安装]Java 安装完成，已注销 ProgressChanged 事件订阅。");
+                }
             };
+            //订阅事件
+            javaInstaller.ProgressChanged += handler;
             await javaInstaller.InstallAsync();
 
         }
@@ -148,7 +153,7 @@ public partial class install
         Log.Information("[安装界面],过滤旧版本");
         
     }
-    public install()
+    public Install()
     {
         
         InitializeComponent();
@@ -174,27 +179,6 @@ public partial class install
         {
             MessageBoxX.Show($"发生错误: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxIcon.Error);
             Log.Error(ex, "[安装界面]加载发生错误");
-        }
-    }
-
-
-    private void TestButton_CilckClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            Log.Debug("[安装界面]调试按钮按下");
-            // 调试信息
-            Console.WriteLine($"当前目录: {CurrentDirectory}");
-            Console.WriteLine($"INI文件路径: {IniFileName}");
-            Console.WriteLine($"目录是否存在: {Directory.Exists(Path.GetDirectoryName(IniFileName))}");
-            Log.Debug($"当前目录: {CurrentDirectory}");
-            Log.Debug($"INI文件路径: {IniFileName}");
-            Console.WriteLine($"INI文件是否存在: {File.Exists(IniFileName)}");
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"写入失败: {ex.Message}");
-            Console.WriteLine($"错误,\nerror:{ex}");
         }
     }
 

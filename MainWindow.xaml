@@ -91,7 +91,7 @@
             <ListBoxItem Content="启动游戏" Tag="{x:Type pages:Go}"     Width="70"/>
             <ListBoxItem Content="用户" Tag="{x:Type pages:Users}"  Width="70"/>
             <ListBoxItem Content="设置"  Tag="{x:Type pages:Setting}" Width="70"/>
-            <ListBoxItem Content="安装" Tag="{x:Type pages:install}" Width="70"/>
+            <ListBoxItem Content="安装" Tag="{x:Type pages:Install}" Width="70"/>
         </ListBox>
         
         <Frame Name="appFrame" NavigationUIVisibility="Hidden" Margin="0,70,0,0"/>

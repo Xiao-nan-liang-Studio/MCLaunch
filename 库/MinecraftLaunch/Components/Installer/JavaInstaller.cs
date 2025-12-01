@@ -1,18 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using Flurl.Http;
 using MinecraftLaunch.Base.Enums;
-using MinecraftLaunch.Base.Interfaces;
-using MinecraftLaunch.Base.Models.Game;
 using MinecraftLaunch.Base.Models.Network;
 using MinecraftLaunch.Components.Downloader;
-using MinecraftLaunch.Components.Parser;
-using MinecraftLaunch.Extensions;
 using System.Diagnostics;
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Runtime.InteropServices;
 using MinecraftLaunch.Base.EventArgs;
 namespace MinecraftLaunch.Components.Installer;
@@ -21,7 +13,7 @@ namespace MinecraftLaunch.Components.Installer;
 /// 跨平台 Java 安装器
 /// </summary>
 public sealed class JavaInstaller{
-    public string JavaFolder { get; init; }
+    private string JavaFolder { get; init; }
     public  string MinecraftFolder { get; init; }
 
     public event EventHandler<EventArgs> Completed;
@@ -102,10 +94,11 @@ public sealed class JavaInstaller{
             ?? throw new InvalidOperationException("无法解析 Java manifest 下载地址"); // 意思：如果没有这个地址就报错
 
         string fileName = Path.Combine(JavaFolder, "java-runtime-filelist.json"); // 拼接路径
-        var downloadRequest = new DownloadRequest(javaUrl, fileName); // 创建下载请求
-        
-        downloadRequest.Size = long.Parse(javaInfo[0]["manifest"]["size"].ToString());
-        
+        var downloadRequest = new DownloadRequest(javaUrl, fileName)
+        {
+            Size = long.Parse(javaInfo[0]["manifest"]["size"].ToString())
+        }; // 创建下载请求
+
         Console.WriteLine(javaUrl);
 
         await new DefaultDownloader()
@@ -128,9 +121,8 @@ public sealed class JavaInstaller{
     int totalFiles = entries.Count;
     int completedFiles = 0;
 
-    // 并发数来自 DownloadManager 或默认 4
-    int maxConcurrentFiles = 4;
-    try { maxConcurrentFiles = Math.Max(1, DownloadManager.MaxThread); } catch { }
+    // 并发数来自 DownloadManager
+    int maxConcurrentFiles = Math.Max(1, DownloadManager.MaxThread);
 
     int perFileTimeoutMs = 60_000; // 每文件超时 60 秒
     int maxRetries = 3;             // 每文件最多重试 3 次
@@ -169,10 +161,10 @@ public sealed class JavaInstaller{
                              ?? throw new InvalidOperationException($"无法解析文件下载 URL: {fileKey}");
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
-                bool success = false;
+                var success = false;
                 Exception lastEx = null;
 
-                for (int attempt = 1; attempt <= maxRetries && !token.IsCancellationRequested; attempt++)
+                for (var attempt = 1; attempt <= maxRetries && !token.IsCancellationRequested; attempt++)
                 {
                     using var singleCts = CancellationTokenSource.CreateLinkedTokenSource(token);
                     singleCts.CancelAfter(perFileTimeoutMs);
@@ -193,8 +185,8 @@ public sealed class JavaInstaller{
                     {
                         var prev = req.ProgressChanged;
                         req.ProgressChanged = e =>
-                        {
-                            try { prev(e); } catch { }
+                        { 
+                            prev(e);
                             progressCallback(e);
                         };
                     }
@@ -216,7 +208,7 @@ public sealed class JavaInstaller{
                     }
                     finally
                     {
-                        try { req.ProgressChanged = null; } catch { }
+                        req.ProgressChanged = null;
                     }
 
                     await Task.Delay(baseRetryDelayMs * attempt, token).ConfigureAwait(false);
@@ -224,7 +216,7 @@ public sealed class JavaInstaller{
 
                 if (!success)
                 {
-                    string reason = lastEx?.Message ?? "Unknown";
+                    var reason = lastEx?.Message ?? "Unknown";
                     failedFiles[fileKey] = reason;
                     Console.WriteLine($"[Java] 下载失败: {fileKey} 原因: {reason}");
                 }
@@ -233,7 +225,7 @@ public sealed class JavaInstaller{
             {
                 Interlocked.Increment(ref completedFiles);
                 ReportProgressWithSpeed();
-                try { semaphore.Release(); } catch { }
+                semaphore.Release();
             }
 
             void ReportProgressWithSpeed(double currentFileProgress = 0.0)
@@ -274,28 +266,6 @@ public sealed class JavaInstaller{
         globalDownloadedBytes / Math.Max(1.0, globalStopwatch.Elapsed.TotalSeconds)
     );
 }
-
-
-
-
-
-
-
-
-
-    private async Task ExtractJavaAsync(FileInfo javaFile, CancellationToken cancellationToken) {
-        ReportProgress(InstallStep.ExtractingFiles, 0.7d, TaskStatus.Running, 1, 0); // 汇报进度
-
-        string extractPath = Path.Combine(JavaFolder, "runtime");
-        if (!Directory.Exists(extractPath)) {
-            Directory.CreateDirectory(extractPath);
-        }
-
-        await Task.Run(() => ZipFile.ExtractToDirectory(javaFile.FullName, extractPath, true), cancellationToken);//解压java文件
-
-        ReportProgress(InstallStep.ExtractingFiles, 0.9d, TaskStatus.Running, 1, 1);
-    }
-
     private string GetPlatformKey() {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             return RuntimeInformation.OSArchitecture == Architecture.X64 ? "windows-x64" : "windows-x86";
