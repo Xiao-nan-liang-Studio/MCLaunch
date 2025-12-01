@@ -1,9 +1,5 @@
-﻿using MinecraftLaunch;
-using MinecraftLaunch.Base.Models.Game;
+﻿using MinecraftLaunch.Base.Models.Game;
 using MinecraftLaunch.Components.Authenticator;
-using MinecraftLaunch.Components.Downloader;
-using MinecraftLaunch.Components.Installer;
-using MinecraftLaunch.Components.Logging;
 using MinecraftLaunch.Components.Parser;
 using MinecraftLaunch.Extensions;
 using MinecraftLaunch.Launch;
@@ -12,17 +8,14 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using MCLaunch.MyClass;
-using MinecraftLaunch.Base.Models.Authentication;
 using Panuon.WPF.UI;
+using Serilog;
 
 namespace MCLaunch
 {
 
     public class Launch
     {
-        public Launch()
-        {
-        }
 
         public async Task ALaunch()
         {
@@ -44,15 +37,15 @@ namespace MCLaunch
 
             #region Forge 安装器
 
-            var entry1 = (await ForgeInstaller.EnumerableForgeAsync("1.21.8"))
-                .First();
-
-            var installer1 = ForgeInstaller.Create("C:\\Users\\wxysd\\Desktop\\temp\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
-            installer1.ProgressChanged += (_, arg) =>
-                Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
-
-            var minecraft1 = await installer1.InstallAsync();
-            Console.WriteLine(minecraft1.Id);
+            // var entry1 = (await ForgeInstaller.EnumerableForgeAsync("1.21.8"))
+            //     .First();
+            //
+            // var installer1 = ForgeInstaller.Create("C:\\Users\\wxysd\\Desktop\\temp\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
+            // installer1.ProgressChanged += (_, arg) =>
+            //     Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+            //
+            // var minecraft1 = await installer1.InstallAsync();
+            // Console.WriteLine(minecraft1.Id);
 
             #endregion
 
@@ -364,7 +357,7 @@ namespace MCLaunch
                 Console.WriteLine($"输入一次性代码: {deviceCode.UserCode}");
                 if (MessageBoxX.Show($"请访问以登录: {deviceCode.VerificationUrl}", "警告", MessageBoxButton.OKCancel, MessageBoxIcon.Info) == MessageBoxResult.OK)
                 {
-                    System.Diagnostics.Process.Start("explorer.exe", deviceCode.VerificationUrl);
+                    Process.Start("explorer.exe", deviceCode.VerificationUrl);
                     Clipboard.SetDataObject(deviceCode.UserCode);
                     Console.WriteLine("已复制一次性代码到剪贴板");
                 }
@@ -422,11 +415,20 @@ namespace MCLaunch
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var init = new Init();
-            init.AInit();
-            var asyncJavas = JavaUtil.EnumerableJavaAsync();
-            await foreach (var java in asyncJavas)
-                Console.WriteLine(java);
+            try
+            {
+                navMenu.SelectedIndex = 0;
+                var init = new Init();
+                init.AInit();
+                var asyncJavas = JavaUtil.EnumerableJavaAsync();
+                await foreach (var java in asyncJavas)
+                    Console.WriteLine(java);
+            }
+            catch(Exception ex)
+            {
+                MessageBoxX.Show(ex.Message, "哎呀~出了一点问题~~~主人不要介意嘛~~~~~~~", MessageBoxButton.OK, MessageBoxIcon.Error);
+                Log.Error(ex,"[窗体]java搜索时错误");
+            }
         }
     }
 }

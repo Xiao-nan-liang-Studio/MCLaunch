@@ -1,19 +1,25 @@
 ﻿using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using Flurl.Http;
 using MinecraftLaunch.Base.Models.Network;
 using MinecraftLaunch.Components.Installer;
 using Panuon.WPF.UI;
-using CmlLib.Core;
-using CmlLib.Core.FileExtractors;
 using MCLaunch.MyClass;
+using Serilog;
+using static System.Environment;
 
 namespace MCLaunch.Views.Pages;
 public partial class install
 {
-    
-    private string IniFileName { get; set; } = Environment.CurrentDirectory + "\\Launcher\\Steup.ini";
+    public void InitLog()
+    {
+        var currentDateTime = DateTime.Now;
+        using var log = new LoggerConfiguration()
+            .WriteTo.File("./Log/log" + currentDateTime.ToString("d"))
+            .CreateLogger();
+        
+    }
+    private string IniFileName { get; set; } = CurrentDirectory + "\\Launcher\\Steup.ini";
     public class VersionInfo(VersionManifestEntry entry)
     {
         public string Id { get; set; } = entry.Id;
@@ -93,44 +99,53 @@ public partial class install
     }
 }
 
-    private void MyWritelog(string logMessage)
-    {
-        IniFile.WriteLog(logMessage);
-    }
 
 
     private async void JavaInstallCilck(object sender, RoutedEventArgs e)
     {
-        //下载 java
-        var javaInstaller = JavaInstaller.Create(Environment.CurrentDirectory + "\\Launcher\\Java");
-        Console.WriteLine(Environment.CurrentDirectory + "\\Launcher\\Java");
-        await javaInstaller.InstallAsync();
-        
+        try{
+            //下载 java
+            var javaInstaller = JavaInstaller.Create(CurrentDirectory + "\\Launcher\\Java");
+            Log.Information("[安装界面]安装java按钮按下,开始安装Java!");
+            Log.Information("[安装界面],安装路径:" + CurrentDirectory + @"\Launcher\Java");
+            Console.WriteLine("安装路径:" + CurrentDirectory + @"\Launcher\Java");
+            javaInstaller.ProgressChanged += (_,ee) =>
+            {
+                Log.Information("[安装界面],Java安装进度: " + ee.Progress * 100 + "%" + " Java安装步骤:" + ee.StepName + " Java下载速度:" + ee.Speed / 1024*1024 + "MB/s");
+            };
+            await javaInstaller.InstallAsync();
+
+        }
+        catch (Exception ex)
+        {
+            MessageBoxX.Show($"发生错误: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxIcon.Error);
+            Log.Error(ex, "[安装界面]Java安装发生错误");
+        }
     }
 
     private void KuaizhaoButton_CilckClick(object sender, RoutedEventArgs e)
     {
         VersionList.ItemsSource = Snapshot;
-        MyWritelog("KuaizhaoButton_Cilck");
+        Log.Information("[安装界面],过滤快照版本");
     }
 
     private void ZhengshiButton_CilckClickClick(object sender, RoutedEventArgs e)
     {
         VersionList.ItemsSource = Release;
-        MyWritelog("ZhengshiButton_Cilck");
+        Log.Information("[安装界面],过滤正式版");
 
     }
 
     private void ALLButton_CilckClick(object sender, RoutedEventArgs e)
     {
         VersionList.ItemsSource = Version;
-        MyWritelog("ALLButton_Cilck");
+        Log.Information("[安装界面],显示所有版本");
 
     }
     private void OldVerButton_Click(object sender, RoutedEventArgs e)
     {
         VersionList.ItemsSource = Very_Very_Old;
-        MyWritelog("OldVerButton_Click");
+        Log.Information("[安装界面],过滤旧版本");
         
     }
     public install()
@@ -141,13 +156,25 @@ public partial class install
 
     private async void Install_OnLoaded(object sender, RoutedEventArgs e)
     {
-        if (VersionList != null)
+        try
         {
-            await GetGameVersions();
+            if (VersionList != null)
+            {
+                await GetGameVersions();
+            }
+
+            Log.Information("[安装界面],初始化完成");
+            Download download = new();
+            Log.Information("准备调用CurseForge搜索Mod");
+            Log.Information("开始搜索,搜索关键词 JEI");
+            await download.CurseForge("JEI");
+            
         }
-        MyWritelog("Install_OnLoaded");
-        Download download = new();
-        await download.CurseForge("JEI");
+        catch (Exception ex)
+        {
+            MessageBoxX.Show($"发生错误: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxIcon.Error);
+            Log.Error(ex, "[安装界面]加载发生错误");
+        }
     }
 
 
@@ -155,27 +182,19 @@ public partial class install
     {
         try
         {
+            Log.Debug("[安装界面]调试按钮按下");
             // 调试信息
-            Console.WriteLine($"当前目录: {Environment.CurrentDirectory}");
+            Console.WriteLine($"当前目录: {CurrentDirectory}");
             Console.WriteLine($"INI文件路径: {IniFileName}");
             Console.WriteLine($"目录是否存在: {Directory.Exists(Path.GetDirectoryName(IniFileName))}");
-        
-            // 确保目录存在
-            var directory = Path.GetDirectoryName(IniFileName);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-                Console.WriteLine("已创建目录");
-            }
-        
-            IniFile.WriteIniFile(null, "1", "1", IniFileName);
-            MessageBoxX.Show("写入成功");
-            MyWritelog("TestButton_Cilck");
+            Log.Debug($"当前目录: {CurrentDirectory}");
+            Log.Debug($"INI文件路径: {IniFileName}");
+            Console.WriteLine($"INI文件是否存在: {File.Exists(IniFileName)}");
         }
         catch (Exception ex)
         {
             MessageBox.Show($"写入失败: {ex.Message}");
-            Console.WriteLine($"写入失败: {ex.Message}");
+            Console.WriteLine($"错误,\nerror:{ex}");
         }
     }
 
