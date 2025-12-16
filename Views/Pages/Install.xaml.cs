@@ -1,12 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using Flurl.Http;
 using MinecraftLaunch.Base.Models.Network;
 using MinecraftLaunch.Components.Installer;
 using Panuon.WPF.UI;
 using MCLaunch.MyClass;
-using MinecraftLaunch.Base.Enums;
 using MinecraftLaunch.Base.EventArgs;
 using MinecraftLaunch.Components.Downloader;
 using Serilog;
@@ -15,19 +12,28 @@ using static System.Environment;
 namespace MCLaunch.Views.Pages;
 public partial class Install
 {
-    private class AInstall(string? v)
+    private class AInstall
     {
+        private readonly Install _installPage;
+        private readonly string? _versionId;
+        
+        public AInstall(Install installPage, string? versionId)
+        {
+            _installPage = installPage;
+            _versionId = versionId;
+        }
+
         public async Task Vanilla()
         {
             var entry = (await VanillaInstaller.EnumerableMinecraftAsync())
-                .First(x => x.Id == v);
+                .First(x => x.Id == _versionId);
                         
             var installer = VanillaInstaller.Create(".\\.minecraft", entry);
             installer.ProgressChanged += (_, arg) =>
             {
                 Log.Information(
                     $"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:F2}%" : $"{arg.Progress * 100:F2}%")}");
-                
+                _installPage.Bar.Value = arg.Progress;
             };
             installer.Completed += (_, arg) =>
                 Log.Information("[安装界面]" + (arg.IsSuccessful ? "安装成功" : $"安装失败 - {arg.Exception}"));
@@ -37,7 +43,7 @@ public partial class Install
 
         public async Task Forge()
         {
-            var entry1 = (await ForgeInstaller.EnumerableForgeAsync(v))
+            var entry1 = (await ForgeInstaller.EnumerableForgeAsync(_versionId))
                 .First();
             var installer1 = ForgeInstaller.Create(".\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
             installer1.ProgressChanged += (_, arg) =>
@@ -47,7 +53,7 @@ public partial class Install
         }
         public async Task Optifine()
         { 
-            var entry = (await OptifineInstaller.EnumerableOptifineAsync(v))
+            var entry = (await OptifineInstaller.EnumerableOptifineAsync(_versionId))
                 .First();
                 var installer = OptifineInstaller.Create(".\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry);
                 installer.ProgressChanged += (_, arg) =>
@@ -57,7 +63,7 @@ public partial class Install
         }
         public async Task Fabric()
         { 
-            var entry = (await FabricInstaller.EnumerableFabricAsync(v))
+            var entry = (await FabricInstaller.EnumerableFabricAsync(_versionId))
                 .First();
                 var installer = FabricInstaller.Create(".\\.minecraft", entry);
                 installer.ProgressChanged += (_, arg) =>
@@ -67,7 +73,7 @@ public partial class Install
         }
         public async Task Quilt()
         { 
-            var entry = (await QuiltInstaller.EnumerableQuiltAsync(v))
+            var entry = (await QuiltInstaller.EnumerableQuiltAsync(_versionId))
                 .First();
                 var installer = QuiltInstaller.Create(".\\.minecraft", entry);
                 installer.ProgressChanged += (_, arg) =>
@@ -255,8 +261,8 @@ public partial class Install
             {
                 Log.Information($"[安装界面],安装按钮按下,开始安装 版本:{info.Id}");
             
-                AInstall installer = new(info.Id);
-                await installer.Vanilla();
+                    AInstall installer = new(this, info.Id);
+                    await installer.Vanilla();
             }
             else
             {
