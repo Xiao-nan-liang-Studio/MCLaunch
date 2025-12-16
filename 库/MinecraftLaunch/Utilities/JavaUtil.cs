@@ -206,6 +206,10 @@ public static partial class JavaUtil {
         // Program Files\Zulu
         folders.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Zulu"));
         folders.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Zulu"));
+        
+        folders.Add(Path.Combine( ".\\Launcher\\Java", "runtime"));
+        
+        
 
         // Check Java for each folder
         foreach (var folder in folders)

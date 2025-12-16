@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Launcher/Java
+/test没用
+/.idea/.idea.MCLaunch/.idea

@@ -8,6 +8,7 @@
       Title="Install" d:DesignHeight="370" d:DesignWidth="620"
       Loaded="Install_OnLoaded">
     <Grid>
+       
         <ListBox x:Name="VersionList" Width="600" Height="250"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"
                  pu:ListBoxHelper.CornerRadius="5"
                  pu:ListBoxHelper.ItemsHeight="50"
@@ -35,7 +36,8 @@
                     Background="#36AAF7" Foreground="#FFFFFF"
                     pu:ButtonHelper.Icon="&#xe9a2;" pu:IconHelper.FontFamily="{StaticResource PanuonIconFont}" pu:IconHelper.Margin="0,0,0,0"
                     Margin="0,0,0,0"
-                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"/>
+                    pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
+                    Click="Install_Button_Click" />
             <Button Content="安装Java" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                     pu:ButtonHelper.CornerRadius="4" 
                     Background="#36AAF7" Foreground="#FFFFFF"
@@ -77,5 +79,25 @@
                     pu:ButtonHelper.ShadowColor="#36AAF7" pu:ShadowHelper.BlurRadius="15" pu:ShadowHelper.ShadowDepth="5"
                     Click="OldVerButton_Click"></Button>
         </StackPanel>
+        <ProgressBar
+            x:Name="Bar"
+            Width="200"
+            Height="50"
+            BorderBrush="#cfebfd"
+            BorderThickness="1"
+            pu:ProgressBarHelper.AnimationDuration="0:0:0.3"
+            pu:ProgressBarHelper.AnimationEasing="CubicInOut"
+            pu:ProgressBarHelper.CornerRadius="10"
+            pu:ProgressBarHelper.IsPercentVisible="False"
+            Background="#fbfcf7"
+            Foreground="#2A9BDD"
+            Value="70"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Margin="0,0,0,0">
+            <ProgressBar.RenderTransform>
+                <RotateTransform Angle="270" />
+            </ProgressBar.RenderTransform>
+        </ProgressBar>
     </Grid>
 </Page>

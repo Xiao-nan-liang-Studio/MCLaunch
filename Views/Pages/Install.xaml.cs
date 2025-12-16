@@ -1,16 +1,81 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using Flurl.Http;
 using MinecraftLaunch.Base.Models.Network;
 using MinecraftLaunch.Components.Installer;
 using Panuon.WPF.UI;
 using MCLaunch.MyClass;
+using MinecraftLaunch.Base.Enums;
 using MinecraftLaunch.Base.EventArgs;
+using MinecraftLaunch.Components.Downloader;
 using Serilog;
 using static System.Environment;
 
 namespace MCLaunch.Views.Pages;
 public partial class Install
 {
+    private class AInstall(string? v)
+    {
+        public async Task Vanilla()
+        {
+            var entry = (await VanillaInstaller.EnumerableMinecraftAsync())
+                .First(x => x.Id == v);
+                        
+            var installer = VanillaInstaller.Create(".\\.minecraft", entry);
+            installer.ProgressChanged += (_, arg) =>
+            {
+                Log.Information(
+                    $"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:F2}%" : $"{arg.Progress * 100:F2}%")}");
+                
+            };
+            installer.Completed += (_, arg) =>
+                Log.Information("[安装界面]" + (arg.IsSuccessful ? "安装成功" : $"安装失败 - {arg.Exception}"));
+            var minecraft = await installer.InstallAsync();
+            Log.Information("\t版本:" + minecraft.Id);
+        }
+
+        public async Task Forge()
+        {
+            var entry1 = (await ForgeInstaller.EnumerableForgeAsync(v))
+                .First();
+            var installer1 = ForgeInstaller.Create(".\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry1);
+            installer1.ProgressChanged += (_, arg) =>
+                Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+            var minecraft1 = await installer1.InstallAsync();
+            Console.WriteLine(minecraft1.Id);
+        }
+        public async Task Optifine()
+        { 
+            var entry = (await OptifineInstaller.EnumerableOptifineAsync(v))
+                .First();
+                var installer = OptifineInstaller.Create(".\\.minecraft", "C:\\Program Files\\Microsoft\\jdk-21.0.7.6-hotspot\\bin\\javaw.exe", entry);
+                installer.ProgressChanged += (_, arg) =>
+                 Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+                 var minecraft2 = await installer.InstallAsync();
+                 Console.WriteLine(minecraft2.Id);
+        }
+        public async Task Fabric()
+        { 
+            var entry = (await FabricInstaller.EnumerableFabricAsync(v))
+                .First();
+                var installer = FabricInstaller.Create(".\\.minecraft", entry);
+                installer.ProgressChanged += (_, arg) =>
+                 Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+                var minecraft3 = await installer.InstallAsync();
+                Console.WriteLine(minecraft3.Id);
+        }
+        public async Task Quilt()
+        { 
+            var entry = (await QuiltInstaller.EnumerableQuiltAsync(v))
+                .First();
+                var installer = QuiltInstaller.Create(".\\.minecraft", entry);
+                installer.ProgressChanged += (_, arg) =>
+                 Console.WriteLine($"{arg.StepName} - {arg.FinishedStepTaskCount}/{arg.TotalStepTaskCount} - {(arg.IsStepSupportSpeed ? $"{DefaultDownloader.FormatSize(arg.Speed, true)} - {arg.Progress * 100:0.00}%" : $"{arg.Progress * 100:0.00}%")}");
+                 var minecraft4 = await installer.InstallAsync();
+                 Console.WriteLine(minecraft4.Id);
+        }
+    }
     public class VersionInfo(VersionManifestEntry entry)
     {
         public string Id { get; set; } = entry.Id;
@@ -53,13 +118,14 @@ public partial class Install
                         break;
                 }
             }
-            Console.WriteLine("游戏版本获取完毕");
             if (VersionList != null)
             {
                 VersionList.DisplayMemberPath = null;
                 VersionList.SelectedValuePath = "Id";
                 VersionList.ItemsSource = Version;
+                VersionList.SelectedItem = Version.First();
                 MessageBoxX.Show("游戏版本获取完毕!", "提示", MessageBoxButton.OK, MessageBoxIcon.Info);
+                Log.Information("[安装界面]游戏版本获取完毕!");
             }
             break;
         }
@@ -109,6 +175,7 @@ public partial class Install
                     ee.StepName,
                     ee.Speed / 1024 / 1024
                 );
+                
                 // 当进度达到 100% 时，自动退订
                 if (ee.Progress >= 1.0)
                 {
@@ -155,7 +222,6 @@ public partial class Install
     }
     public Install()
     {
-        
         InitializeComponent();
     }
 
@@ -182,5 +248,26 @@ public partial class Install
         }
     }
 
-    
+    private async void Install_Button_Click(object sender, RoutedEventArgs e)
+    {
+        try{
+            if (VersionList.SelectedItem is VersionInfo info)
+            {
+                Log.Information($"[安装界面],安装按钮按下,开始安装 版本:{info.Id}");
+            
+                AInstall installer = new(info.Id);
+                await installer.Vanilla();
+            }
+            else
+            {
+                Log.Information("[安装界面]弹出对话框:请选择一个版本!");
+                MessageBoxX.Show("请选择一个版本！", "提示", MessageBoxButton.OK, MessageBoxIcon.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBoxX.Show($"发生错误: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxIcon.Error);
+            Log.Error(ex, "[安装界面]安装发生错误");
+        }
+    }
 }

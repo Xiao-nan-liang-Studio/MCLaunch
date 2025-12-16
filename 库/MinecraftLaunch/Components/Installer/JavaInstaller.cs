@@ -94,8 +94,7 @@ public sealed class JavaInstaller{
             ?? throw new InvalidOperationException("无法解析 Java manifest 下载地址"); // 意思：如果没有这个地址就报错
 
         string fileName = Path.Combine(JavaFolder, "java-runtime-filelist.json"); // 拼接路径
-        var downloadRequest = new DownloadRequest(javaUrl, fileName)
-        {
+        var downloadRequest = new DownloadRequest(javaUrl, fileName){
             Size = long.Parse(javaInfo[0]["manifest"]["size"].ToString())
         }; // 创建下载请求
 
@@ -123,9 +122,8 @@ public sealed class JavaInstaller{
 
     // 并发数来自 DownloadManager
     int maxConcurrentFiles = Math.Max(1, DownloadManager.MaxThread);
-
     int perFileTimeoutMs = 60_000; // 每文件超时 60 秒
-    int maxRetries = 3;             // 每文件最多重试 3 次
+    int maxRetries = DownloadManager.MaxRetryCount;             // 每文件的重试次数从DownloadManager获取喵~
     int baseRetryDelayMs = 1000;    // 重试间隔指数退避基数
 
     using var semaphore = new SemaphoreSlim(maxConcurrentFiles);
@@ -135,22 +133,18 @@ public sealed class JavaInstaller{
     long globalDownloadedBytes = 0;
     var globalStopwatch = Stopwatch.StartNew();
 
-    foreach (var kv in entries)
-    {
+    foreach (var kv in entries) {
         var fileKey = kv.Key;
         var fileNode = kv.Value!;
 
-        tasks.Add(Task.Run(async () =>
-        {
+        tasks.Add(Task.Run(async () => {
             await semaphore.WaitAsync(token).ConfigureAwait(false);
-            try
-            {
+            try {
                 string filePath = Path.Combine(extractPath, fileKey);
                 var fileInfo = fileNode.AsObject();
 
                 // 目录直接创建
-                if (fileInfo["type"]?.ToString() == "directory")
-                {
+                if (fileInfo["type"]?.ToString() == "directory") {
                     Directory.CreateDirectory(filePath);
                     Interlocked.Increment(ref completedFiles);
                     ReportProgressWithSpeed();
@@ -164,15 +158,13 @@ public sealed class JavaInstaller{
                 var success = false;
                 Exception lastEx = null;
 
-                for (var attempt = 1; attempt <= maxRetries && !token.IsCancellationRequested; attempt++)
-                {
+                for (var attempt = 1; attempt <= maxRetries && !token.IsCancellationRequested; attempt++) {
                     using var singleCts = CancellationTokenSource.CreateLinkedTokenSource(token);
                     singleCts.CancelAfter(perFileTimeoutMs);
 
                     var req = new DownloadRequest(url, filePath);
 
-                    Action<ResourceDownloadProgressChangedEventArgs> progressCallback = e =>
-                    {
+                    Action<ResourceDownloadProgressChangedEventArgs> progressCallback = e => {
                         double fileProgress = e.TotalBytes > 0 ? (double)e.DownloadedBytes / e.TotalBytes : 0.0;
                         Interlocked.Exchange(ref globalDownloadedBytes, Interlocked.Read(ref globalDownloadedBytes) + e.DownloadedBytes);
 
@@ -181,55 +173,46 @@ public sealed class JavaInstaller{
 
                     if (req.ProgressChanged == null)
                         req.ProgressChanged = progressCallback;
-                    else
-                    {
+                    else {
                         var prev = req.ProgressChanged;
-                        req.ProgressChanged = e =>
-                        { 
+                        req.ProgressChanged = e => { 
                             prev(e);
                             progressCallback(e);
                         };
                     }
 
-                    try
-                    {
+                    try {
                         await new DefaultDownloader().DownloadAsync(req, singleCts.Token).ConfigureAwait(false);
                         success = true;
                         break;
                     }
-                    catch (OperationCanceledException oce)
-                    {
+                    catch (OperationCanceledException oce) {
                         lastEx = oce;
                         if (token.IsCancellationRequested) break;
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         lastEx = ex;
                     }
-                    finally
-                    {
+                    finally {
                         req.ProgressChanged = null;
                     }
 
                     await Task.Delay(baseRetryDelayMs * attempt, token).ConfigureAwait(false);
                 }
 
-                if (!success)
-                {
+                if (!success) {
                     var reason = lastEx?.Message ?? "Unknown";
                     failedFiles[fileKey] = reason;
-                    Console.WriteLine($"[Java] 下载失败: {fileKey} 原因: {reason}");
+                    Console.WriteLine($"[Java] 下载失败: {fileKey} 原因: {reason} - JavaInstaller.cs:207");
                 }
             }
-            finally
-            {
+            finally {
                 Interlocked.Increment(ref completedFiles);
                 ReportProgressWithSpeed();
                 semaphore.Release();
             }
 
-            void ReportProgressWithSpeed(double currentFileProgress = 0.0)
-            {
+            void ReportProgressWithSpeed(double currentFileProgress = 0.0) {
                 int snap = Volatile.Read(ref completedFiles);
                 double overallProgress = 0.7 + 0.3 * Math.Min((snap + currentFileProgress) / totalFiles, 1.0);
                 double speed = globalDownloadedBytes / Math.Max(1.0, globalStopwatch.Elapsed.TotalSeconds); // Bytes/s
@@ -249,11 +232,10 @@ public sealed class JavaInstaller{
 
     await Task.WhenAll(tasks).ConfigureAwait(false);
 
-    if (!failedFiles.IsEmpty)
-    {
-        Console.WriteLine("[Java] 以下文件最终失败：");
+    if (!failedFiles.IsEmpty) {
+        Console.WriteLine("[Java] 以下文件最终失败： - JavaInstaller.cs:237");
         foreach (var kv in failedFiles)
-            Console.WriteLine($" - {kv.Key} : {kv.Value}");
+            Console.WriteLine($"{kv.Key} : {kv.Value} - JavaInstaller.cs:239");
     }
 
     // 最终 100%
